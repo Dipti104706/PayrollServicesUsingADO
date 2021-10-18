@@ -10,6 +10,7 @@ namespace PayrollServicesUsingADO
         //passing the string to sqlconnection to make connection 
         SqlConnection sqlconnection = new SqlConnection(connectionString);
 
+        //Uc2/////
         //GetAllEmployee method
         public void GetAllEmployee()
         {
@@ -57,6 +58,37 @@ namespace PayrollServicesUsingADO
             finally
             {
                 this.sqlconnection.Close();
+            }
+        }
+
+        //Uc3 to updated salary of perticular person
+        public void UpdateSalary()
+        {
+            try
+            {
+                EmployeeModel employeeModel = new EmployeeModel();
+                sqlconnection.Open();
+                string query = @"update employee_payroll set Base_pay=3000000 where name='Terissa'";
+                SqlCommand command = new SqlCommand(query, sqlconnection);
+
+                int result = command.ExecuteNonQuery();
+                if (result != 0)
+                {
+                    Console.WriteLine("Salary Updated Successfully ");
+                }
+                else
+                {
+                    Console.WriteLine("Unsuccessfull");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                sqlconnection.Close();
+
             }
         }
     }
