@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PayrollServicesUsingADO
 {
-    class EmployeeModel
+    public class EmployeeModel
     {
         //Getter and setter fields(present in db)
         public int EmployeeId { get; set; }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace PayrollServicesUsingADO
@@ -89,6 +90,43 @@ namespace PayrollServicesUsingADO
             {
                 sqlconnection.Close();
 
+            }
+        }
+
+        //Update salary using Stored procedure
+        public string UpdateSalaryUsingStoredProcedure(EmployeeModel model)
+        {
+            try
+            {
+                using (this.sqlconnection)
+                {
+                    SqlCommand command = new SqlCommand("dbo.SpUpdateSalary", this.sqlconnection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Name", model.EmployeeName);
+                    command.Parameters.AddWithValue("@basePay", model.BasicPay);
+                    sqlconnection.Open();
+                    var result = command.ExecuteNonQuery();
+                    if (result != 0)
+                    {
+                        Console.WriteLine("Updated Successfully");
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("Unsuccessfull");
+                    }
+
+                }
+                return "Updated Successfully";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return default;
+            }
+            finally
+            {
+                this.sqlconnection.Close();
             }
         }
     }

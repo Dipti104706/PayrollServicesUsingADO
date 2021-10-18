@@ -10,10 +10,7 @@ namespace PayrollServicesUsingADO
     {
         static void Main(string[] args)
         {
-            //Creating a object for employeerepository
-            EmployeeRepository repository = new EmployeeRepository();
-            repository.UpdateSalary();
-            Console.ReadLine();
+            
         }
     }
 }
