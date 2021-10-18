@@ -35,5 +35,15 @@ namespace TestValidationforPayrollServices
             string actual = repository.RetrieveDataBasedOnDateRange(model);
             Assert.AreEqual(actual, expected);
         }
+
+        //UC6 Find Sum, average, max, min group by gender
+        [TestMethod]
+        public void FindSumAvgMinMax()
+        {
+            string expected = "Get the details successfully";
+            model.Gender = "M";
+            string actual = repository.PerformAggregateFunctions(model);
+            Assert.AreEqual(actual, expected);
+        }
     }
 }

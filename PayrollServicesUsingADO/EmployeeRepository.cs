@@ -179,5 +179,40 @@ namespace PayrollServicesUsingADO
             }
             return "Get the details within date range successfully";
         }
+
+        //Uc6 to find sum,average,min,max of salary group by gender
+        public string PerformAggregateFunctions(EmployeeModel model)
+        {
+            try
+            {
+                SqlCommand command = new SqlCommand("dbo.SpFindSumAverage", this.sqlconnection);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@Gender", model.Gender);
+                sqlconnection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        Console.WriteLine(" Total Salary: {0} \n Average Salary: {1} \n Minimum Salary: {2} \n Max Salary:{3} \n Count of employess:{4} Group by {5}", reader[0], reader[1], reader[2], reader[3], reader[5], reader[4]);
+                    }
+                }
+                else
+                {
+                    return "There is no row present";
+                }
+                reader.Close();
+                return "Get the details successfully";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return default;
+            }
+            finally
+            {
+                this.sqlconnection.Close();
+            }
+        }
     }
 }
