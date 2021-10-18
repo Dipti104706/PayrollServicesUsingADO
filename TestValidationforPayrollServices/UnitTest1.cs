@@ -26,5 +26,14 @@ namespace TestValidationforPayrollServices
             string actual = repository.UpdateSalaryUsingStoredProcedure(model);
             Assert.AreEqual(actual, expected);
         }
+
+        //Uc5 retrieve employee within a daterange
+        [TestMethod]
+        public void RetrieveDetailsWithinDateRange()
+        {
+            string expected = "Get the details within date range successfully";
+            string actual = repository.RetrieveDataBasedOnDateRange(model);
+            Assert.AreEqual(actual, expected);
+        }
     }
 }

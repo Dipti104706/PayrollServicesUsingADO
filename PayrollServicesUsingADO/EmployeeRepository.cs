@@ -93,7 +93,7 @@ namespace PayrollServicesUsingADO
             }
         }
 
-        //Update salary using Stored procedure
+        //UC4 Update salary using Stored procedure
         public string UpdateSalaryUsingStoredProcedure(EmployeeModel model)
         {
             try
@@ -128,6 +128,56 @@ namespace PayrollServicesUsingADO
             {
                 this.sqlconnection.Close();
             }
+        }
+
+        //UC5 retrieve employee details within a date range
+        public string RetrieveDataBasedOnDateRange(EmployeeModel model)
+        {
+            try
+            {
+                using (sqlconnection)
+                {
+                    //query execution
+                    string query = @"select * from employee_payroll where startDate between('2019-05-01') and getdate()";
+                    //passing the query and connection
+                    SqlCommand command = new SqlCommand(query, this.sqlconnection);
+                    //open sql connection
+                    sqlconnection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            model.EmployeeId = Convert.ToInt32(reader["id"] == DBNull.Value ? default : reader["id"]);
+                            model.EmployeeName = reader["name"] == DBNull.Value ? default : reader["name"].ToString();
+                            model.BasicPay = Convert.ToDouble(reader["Base_Pay"] == DBNull.Value ? default : reader["Base_Pay"]);
+                            model.StartDate = (DateTime)(reader["startDate"] == DBNull.Value ? default(DateTime) : reader["startDate"]);
+                            model.Gender = reader["gender"] == DBNull.Value ? default : reader["gender"].ToString();
+                            model.Department = reader["department"] == DBNull.Value ? default : reader["department"].ToString();
+                            model.PhoneNumber = Convert.ToDouble(reader["phone"] == DBNull.Value ? default : reader["phone"]);
+                            model.Address = reader["address"] == DBNull.Value ? default : reader["address"].ToString();
+                            model.Deductions = Convert.ToDouble(reader["Deductions"] == DBNull.Value ? default : reader["Deductions"]);
+                            model.TaxablePay = Convert.ToDouble(reader["TaxablePay"] == DBNull.Value ? default : reader["TaxablePay"]);
+                            model.IncomeTax = Convert.ToDouble(reader["IncomeTax"] == DBNull.Value ? default : reader["IncomeTax"]);
+                            model.NetPay = Convert.ToDouble(reader["NetPay"] == DBNull.Value ? default : reader["NetPay"]);
+                            Console.WriteLine("{0} {1} {2}  {3} {4} {5}  {6}  {7} {8} {9} {10} {11}", model.EmployeeId, model.EmployeeName, model.BasicPay, model.StartDate, model.Gender, model.Department, model.PhoneNumber, model.Address, model.Deductions, model.TaxablePay, model.IncomeTax, model.NetPay);
+                            Console.WriteLine("\n");
+                        }
+                    }
+                    //close reader
+                    reader.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return default;
+            }
+            finally
+            {
+                sqlconnection.Close();
+            }
+            return "Get the details within date range successfully";
         }
     }
 }
