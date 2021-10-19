@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace PayrollServicesUsingADO
@@ -12,7 +13,8 @@ namespace PayrollServicesUsingADO
         //Create Object for EmployeeData Repository
         ERModel employeeModel = new ERModel();
 
-        //UC9 Impliment ER diagram 
+        //UC10 Impliment ER diagram  and Redo Uc2 - Uc7
+        //UC2 to retrieve all employee details
         public void RetrieveAllEmployeeDetails()
         {
             try
@@ -62,6 +64,105 @@ namespace PayrollServicesUsingADO
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+            }
+        }
+
+        //UC3 Update base pay for a particular employee
+        public string UpdateSalaryofParticular()
+        {
+            //Open Connection
+            sqlConnection.Open();
+            string query = @"update payroll set BasicPay = 3000000 where EmpId = (Select EmployeeID from Employee where EmployeeName = 'Priyanka')";
+
+            //Pass query to TSql
+            SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
+            int result = sqlCommand.ExecuteNonQuery();
+            SqlDataReader dataReader = sqlCommand.ExecuteReader();
+            if (result != 0)
+            {
+                Console.WriteLine("Salary Updated Successfully");
+            }
+            else
+            {
+                Console.WriteLine("Unsuccessfull");
+            }
+            //Close Connection
+            sqlConnection.Close();
+            return "Salary Updated Successfully";
+        }
+
+        //UC4 Update salary using Stored procedure
+        public void UpdateSalarybySP(ERModel model)
+        {
+            try
+            {
+                using (this.sqlConnection)
+                {
+                    SqlCommand command = new SqlCommand("dbo.SpUpdateSalary2", this.sqlConnection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@name", model.Name);
+                    command.Parameters.AddWithValue("@basePay", model.Basic_Pay);
+                    sqlConnection.Open();
+                    var result = command.ExecuteNonQuery();
+                    if (result != 0)
+                    {
+                        Console.WriteLine("Updated Successfully");
+
+                    }
+                    else
+                    {
+                        Console.WriteLine("Unsuccessfull");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                this.sqlConnection.Close();
+            }
+        }
+
+        //UC5 retrieve employee details within a date range
+        public void RetrieveDataBasedOnDateRange()
+        {
+            try
+            {
+                using (sqlConnection)
+                {
+                    //query execution
+                    string query = @"select Employee.EmployeeId,Employee.EmployeeName,payroll.BasicPay 
+                                    from payroll
+                                    inner join  Employee on Employee.EmployeeId = payroll.EmpId where Employee.StartDate between Cast('2020-01-01' as Date) and GETDATE();";
+                    //passing the query and connection
+                    SqlCommand command = new SqlCommand(query, this.sqlConnection);
+                    //open sql connection
+                    sqlConnection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            employeeModel.Id = Convert.ToInt32(reader["EmployeeId"] == DBNull.Value ? default : reader["EmployeeId"]);
+                            employeeModel.Name = reader["EmployeeName"] == DBNull.Value ? default : reader["EmployeeName"].ToString();
+                            employeeModel.Basic_Pay = Convert.ToDouble(reader["BasicPay"] == DBNull.Value ? default : reader["BasicPay"]);
+                            Console.WriteLine("{0} {1} {2}", employeeModel.Id, employeeModel.Name,employeeModel.Basic_Pay);
+                            Console.WriteLine("\n");
+                        }
+                    }
+                    //close reader
+                    reader.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                sqlConnection.Close();
             }
         }
     }
