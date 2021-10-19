@@ -181,7 +181,7 @@ namespace PayrollServicesUsingADO
         }
 
         //Uc6 to find sum,average,min,max of salary group by gender
-        public string PerformAggregateFunctions(EmployeeModel model)
+        public string PerformFunctions(EmployeeModel model)
         {
             try
             {
@@ -212,6 +212,54 @@ namespace PayrollServicesUsingADO
             finally
             {
                 this.sqlconnection.Close();
+            }
+        }
+
+        //UC7 to add new employee details to the database
+        public string AddEmployee(EmployeeModel model)
+        {
+            string message;
+            try
+            {
+                using (this.sqlconnection)
+                {
+                    //we can also use update query to add employee, but using stored procedure is to write once and reuse concept
+                    //query will compile every time, but SP compile one time till u modify anything
+                    SqlCommand command = new SqlCommand("dbo.SpAddEmployeeDetails", this.sqlconnection);
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@name", model.EmployeeName);
+                    command.Parameters.AddWithValue("@Base_Pay", model.BasicPay);
+                    command.Parameters.AddWithValue("@start", model.StartDate);
+                    command.Parameters.AddWithValue("@gender", model.Gender);
+                    command.Parameters.AddWithValue("@phone_number", model.PhoneNumber);
+                    command.Parameters.AddWithValue("@address", model.Address);
+                    command.Parameters.AddWithValue("@department", model.Department);
+                    command.Parameters.AddWithValue("@Taxable_pay", model.TaxablePay);
+                    sqlconnection.Open();
+                    //ExecuteNonQuery return how many row affected by executing query
+                    var result = command.ExecuteNonQuery();
+                    if (result != 0)
+                    { 
+                        message= "Successfully inserted the records";
+                    }
+                    else
+                    {
+                        throw new CustomException (CustomException.ExceptionType.NO_ROW_AFFECTED, "Insertion of result is unsuccessfull");
+                    }
+                }
+                return message;
+            }
+            catch (CustomException)
+            {
+                throw new CustomException(CustomException.ExceptionType.NO_ROW_AFFECTED, "Insertion of result is unsuccessfull");
+            }
+            catch (Exception)
+            {
+                throw new CustomException(CustomException.ExceptionType.SP_NOT_FOUND, "Stored Procedure is not found");
+            }
+            finally
+            {
+                sqlconnection.Close();
             }
         }
     }

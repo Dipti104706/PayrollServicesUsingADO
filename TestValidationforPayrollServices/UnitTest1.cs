@@ -42,8 +42,52 @@ namespace TestValidationforPayrollServices
         {
             string expected = "Get the details successfully";
             model.Gender = "M";
-            string actual = repository.PerformAggregateFunctions(model);
+            string actual = repository.PerformFunctions(model);
             Assert.AreEqual(actual, expected);
         }
+
+        //Uc7 Add new employee
+        [TestMethod]
+        [TestCategory ("Positivecase")]
+        public void AddingNewEmployeesuccesfully()
+        {
+            string expected = "Successfully inserted the records";
+            model.EmployeeName = "Sabita";
+            model.BasicPay = 900000;
+            model.StartDate = DateTime.Today;
+            model.Gender = "M";
+            model.PhoneNumber = 45698741256;
+            model.Address = "Pune";
+            model.Department = "Sales";
+            model.TaxablePay = 3500;
+            string actual = repository.AddEmployee(model);
+            Assert.AreEqual(actual, expected);
+        }
+
+        [TestMethod]
+        [TestCategory("Negativecase")]
+        public void PassWrongSPReturnCustomException()
+        {
+            string expected = "Stored Procedure is not found";
+            model.EmployeeName = "Kabita";
+            model.BasicPay = 900000;
+            model.StartDate = DateTime.Today;
+            model.Gender = "M";
+            model.PhoneNumber = 45698741256;
+            model.Address = "Pune";
+            model.Department = "Sales";
+            model.TaxablePay = 3500;
+            string actual = "";
+            try
+            {
+                actual = repository.AddEmployee(model);
+            }
+            catch (CustomException ex)
+            {
+                //ASSERT
+                Assert.AreEqual(expected, ex.Message);
+            }
+        }
+
     }
 }
