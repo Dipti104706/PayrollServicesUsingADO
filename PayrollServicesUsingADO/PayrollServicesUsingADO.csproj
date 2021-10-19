@@ -46,6 +46,8 @@
     <Compile Include="CustomException.cs" />
     <Compile Include="EmployeeModel.cs" />
     <Compile Include="EmployeeRepository.cs" />
+    <Compile Include="EmployeeRepositoryUsingER.cs" />
+    <Compile Include="ERModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

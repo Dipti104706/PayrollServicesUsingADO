@@ -10,7 +10,9 @@ namespace PayrollServicesUsingADO
     {
         static void Main(string[] args)
         {
-            
+            EmployeeRepositoryUsingER repository = new EmployeeRepositoryUsingER();
+            repository.RetrieveAllEmployeeDetails();
+            Console.ReadLine();
         }
     }
 }
