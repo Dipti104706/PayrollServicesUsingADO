@@ -262,5 +262,55 @@ namespace PayrollServicesUsingADO
                 sqlconnection.Close();
             }
         }
+
+        //UC8 Inserting in to two table using transaction query
+        public string InsertIntoTwoTablesWithTransactions()
+        {
+            using (sqlconnection)
+            {
+                sqlconnection.Open();
+
+                // Start a local transaction.
+                SqlTransaction sqlTran = sqlconnection.BeginTransaction();
+
+                // Enlist a command in the current transaction.
+                SqlCommand command = sqlconnection.CreateCommand();
+                command.Transaction = sqlTran;
+
+                try
+                {
+                    // Execute two separate commands.
+                    command.CommandText =
+                      "insert into EmployeeTest(name) values('Kabil')";
+                    command.ExecuteScalar();
+                    Console.WriteLine("Inserted into Employee table successfully.");
+                    command.CommandText =
+                      "insert into Salary(Salary,EmpId) values('7000','7')";
+                    command.ExecuteNonQuery();
+                    Console.WriteLine("Inserted into  table successfully.");
+                    // Commit the transaction.
+                    sqlTran.Commit();
+                    return "Both records were written to database";
+                }
+                
+                catch (Exception ex)
+                {
+                    // Handle the exception if the transaction fails to commit.
+                    Console.WriteLine(ex.Message);
+
+                    try
+                    {
+                        // Attempt to roll back the transaction if any of the action fails 
+                        sqlTran.Rollback();
+                    }
+                    catch (Exception exRollback)
+                    {
+                        // Throws an InvalidOperationException if the connection back on the server.
+                        Console.WriteLine(exRollback.Message);
+                    }
+                    return default;
+                }
+            }
+        }
     }
 }

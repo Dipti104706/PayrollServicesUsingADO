@@ -89,5 +89,13 @@ namespace TestValidationforPayrollServices
             }
         }
 
+        //UC8 Add details in two table using transaction query
+        [TestMethod]
+        public void TestTransactionQuery()
+        {
+            string expected = "Both records were written to database";
+            string actual = repository.InsertIntoTwoTablesWithTransactions();
+            Assert.AreEqual(actual, expected);
+        }
     }
 }
